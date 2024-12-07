@@ -40,8 +40,40 @@ first_trading_day = df.groupby('Month_Year').first().reset_index()
     Data["log_return"] = np.log(1 + Data["pct_ROI"])
     Data["log_return"] = Data["log_return"].round(5)
 ```
-- Construct Volatility
-  The volatility of each security is calculated using the one-day log-return over a one-year lookback period, employing the Rolling Window method.
+- Construct Volatility<br>
+  The volatility of each security is calculated using the one-day log-return over a one-year lookback period, employing the Rolling Window method do the same with Market data.
+```python
+    # Calculate volatility with a 120-day rolling window
+    Data["volatility"] = Data["log_return"].rolling(window=120, min_periods=120).std()
+    Data["volatility"] = Data["volatility"].round(5)
+```
+- Construct Correlation<br>
+    1. Create 3day_log_return from SETTRI data and ROI stock data.
+    2. Merged Stock df with Market df to get Market return data on "Date"
+    3. Construct Correlation can be estimated using the Rolling Window method, applying a backward-looking average over N years. In this study, the rolling window spans 3 years, calculated from the sum of 3-day log-returns.
+``` python
+    #rolling 3 Year Log return
+    window_size = 3 * 244  # Approximate 5-year window for daily data
+    M_data['3year_rolling_correlation'] = M_data['3day_log_return_stock'].rolling(window=window_size).corr(M_data['3day_log_return_market']).round(5)
+```
+- Construct Beta<br>
+The formula can be expressed as follows:
+```math 
+\hat\beta_{i}^{TS} = \hat\rho_{i,m} {{\hat\sigma_{i} } \over { \hat\sigma_{m} }}
+```
+- $\hat\rho_{i,m}$ is  is the correlation coefficient between security i and the market.
+- $\hat\sigma_{i}$ , $\hat\sigma_{m}$ is the volatility of security i and the market
+``` python
+ M_data['TimeSeries_Beta'] = M_data['3year_rolling_correlation'] * (M_data['volatility_stock'] / M_data['volatility_market'])
+```
+Then the  estimated values are adjusted using the method of **Vasicek (1973)**, applying a **Bayesian approach** to reduce estimation errors and mitigate the impact of extreme values. The adjusted values can be calculated using the following equation:
+```math 
+\hat\beta_{i} = {w_{i}}{\hat\beta_{i}^{TS}}  + (1 - {w_{i}}) {\beta^{XS}}
+```
+- $\hat\beta_{i}$ is Beta value that estimated from Time Series Returns
+- $\beta^{XS}$ is Crossectional Beta by **Vasicek (1973)** which equal to one
+- ${w_{i}}$ is Shrinkage Factor which Equal to 0.6
+
 
 
 
