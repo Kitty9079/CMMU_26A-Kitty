@@ -1,5 +1,5 @@
 # Low-risk Anomaly: Betting-Against-Correlation 
-This Repository is for educational Purpose only.The objective of this code is to create BAC BAB and BAV Factor.
+This Repository is for educational purpose only.The objective of this code is to create BAC BAB and BAV Factor.
 This research is aim to create Betting Against Correlation Factor return.
 
 ## Objective 
