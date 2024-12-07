@@ -58,21 +58,34 @@ first_trading_day = df.groupby('Month_Year').first().reset_index()
 ```
 - Construct Beta<br>
 The formula can be expressed as follows:
+
 ```math 
 \hat\beta_{i}^{TS} = \hat\rho_{i,m} {{\hat\sigma_{i} } \over { \hat\sigma_{m} }}
 ```
+<br>
+
 - $\hat\rho_{i,m}$ is  is the correlation coefficient between security i and the market.
-- $\hat\sigma_{i}$ , $\hat\sigma_{m}$ is the volatility of security i and the market
+- $\hat\sigma_{i}$ , $\hat\sigma_{m}$ is the volatility of security i and the market.
+
 ``` python
  M_data['TimeSeries_Beta'] = M_data['3year_rolling_correlation'] * (M_data['volatility_stock'] / M_data['volatility_market'])
 ```
 Then the  estimated values are adjusted using the method of **Vasicek (1973)**, applying a **Bayesian approach** to reduce estimation errors and mitigate the impact of extreme values. The adjusted values can be calculated using the following equation:
+
 ```math 
 \hat\beta_{i} = {w_{i}}{\hat\beta_{i}^{TS}}  + (1 - {w_{i}}) {\beta^{XS}}
 ```
+<br>
+
 - $\hat\beta_{i}$ is Beta value that estimated from Time Series Returns
 - $\beta^{XS}$ is Crossectional Beta by **Vasicek (1973)** which equal to one
 - ${w_{i}}$ is Shrinkage Factor which Equal to 0.6
+
+```python
+ M_data['Adjusted_Beta'] = (M_data['TimeSeries_Beta'] * 0.6) + 0.4
+```
+
+
 
 
 
