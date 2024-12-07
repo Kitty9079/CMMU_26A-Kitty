@@ -53,7 +53,7 @@ first_trading_day = df.groupby('Month_Year').first().reset_index()
     3. Construct Correlation can be estimated using the Rolling Window method, applying a backward-looking average over N years. In this study, the rolling window spans 3 years, calculated from the sum of 3-day log-returns.
 ``` python
     #rolling 3 Year Log return
-    window_size = 3 * 244  # Approximate 5-year window for daily data
+    window_size = 3 * 244  # Approximate 3-year window for daily data
     M_data['3year_rolling_correlation'] = M_data['3day_log_return_stock'].rolling(window=window_size).corr(M_data['3day_log_return_market']).round(5)
 ```
 - Construct Beta<br>
